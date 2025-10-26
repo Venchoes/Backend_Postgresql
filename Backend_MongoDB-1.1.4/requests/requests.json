@@ -1,0 +1,437 @@
+{
+  "info": {
+    "name": "Backend MongoDB - API Tests",
+    "description": "Coleção de requisições para testar a API Backend MongoDB com todos os cenários de cadastro, login e rotas protegidas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "default"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "taskId",
+      "value": "",
+      "type": "default"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "Cadastro bem-sucedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao.silva@example.com\",\n  \"password\": \"SenhaSegura123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro com erro - E-mail repetido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Souza\",\n  \"email\": \"joao.silva@example.com\",\n  \"password\": \"OutraSenha123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro com erro - Senha inválida (muito curta)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carlos Pereira\",\n  \"email\": \"carlos.pereira@example.com\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro com erro - E-mail inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ana Lima\",\n  \"email\": \"email-invalido\",\n  \"password\": \"SenhaValida123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro com erro - Requisição mal formatada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lucas Santos\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login bem-sucedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salva o token automaticamente na variável de ambiente",
+                  "if (pm.response.code === 200) {",
+                  "  var jsonData = pm.response.json();",
+                  "  if (jsonData.token) {",
+                  "    pm.environment.set(\"token\", jsonData.token);",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"password\": \"SenhaSegura123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login com erro - Senha inválida",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao.silva@example.com\",\n  \"password\": \"SenhaErrada123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login com erro - E-mail inválido (não existe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"email.inexistente@example.com\",\n  \"password\": \"SenhaSegura123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login com erro - Requisição mal formatada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao.silva@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rotas Protegidas",
+      "item": [
+        {
+          "name": "Acesso a /protected com token válido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/protected",
+              "host": ["{{base_url}}"],
+              "path": ["protected"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tentativa de acesso a /protected sem token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/protected",
+              "host": ["{{base_url}}"],
+              "path": ["protected"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tentativa de acesso a /protected com token inválido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZhbGlkIjoidG9rZW4ifQ.invalid",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/protected",
+              "host": ["{{base_url}}"],
+              "path": ["protected"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tasks (CRUD)",
+      "item": [
+        {
+          "name": "Create Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salva o taskId da resposta",
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  if (json && json._id) {",
+                  "    pm.collectionVariables.set('taskId', json._id);",
+                  "    pm.environment.set('taskId', json._id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Estudar MongoDB\",\n  \"description\": \"Revisar índices e agregações\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2030-01-01T00:00:00.000Z\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+          },
+          "response": []
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+          },
+          "response": []
+        },
+        {
+          "name": "List Tasks (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": {
+              "raw": "{{base_url}}/tasks?status=todo&priority=high&title=estudar&dueDateFrom=2025-10-01&dueDateTo=2030-01-01",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {"key":"status","value":"todo"},
+                {"key":"priority","value":"high"},
+                {"key":"title","value":"estudar"},
+                {"key":"dueDateFrom","value":"2025-10-01"},
+                {"key":"dueDateTo","value":"2030-01-01"}
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task by ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/tasks/{{taskId}}", "host": ["{{base_url}}"], "path": ["tasks","{{taskId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Estudar MongoDB a fundo\",\n  \"description\": \"Aulas 1-5\",\n  \"status\": \"in-progress\",\n  \"priority\": \"medium\",\n  \"dueDate\": null\n}"
+            },
+            "url": { "raw": "{{base_url}}/tasks/{{taskId}}", "host": ["{{base_url}}"], "path": ["tasks","{{taskId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"done\"\n}" },
+            "url": { "raw": "{{base_url}}/tasks/{{taskId}}", "host": ["{{base_url}}"], "path": ["tasks","{{taskId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/tasks/{{taskId}}", "host": ["{{base_url}}"], "path": ["tasks","{{taskId}}"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - No Token (List)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Invalid Token (List)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer invalid.token.here" } ],
+            "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

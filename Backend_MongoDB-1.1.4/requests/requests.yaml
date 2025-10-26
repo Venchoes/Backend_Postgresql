@@ -1,0 +1,154 @@
+# Insomnia Collection - Task-List CRUD
+# Variáveis sugeridas
+# baseUrl: http://localhost:3000
+# token: <coloque_o_token_de_login>
+
+---
+version: 1
+resources:
+  - _id: req_register
+    type: request
+    name: Register
+    method: POST
+    url: "{{ baseUrl }}/register"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "name": "Alice Doe",
+          "email": "alice@example.com",
+          "password": "secret123"
+        }
+
+  - _id: req_login
+    type: request
+    name: Login
+    method: POST
+    url: "{{ baseUrl }}/login"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "email": "alice@example.com",
+          "password": "secret123"
+        }
+
+  - _id: req_tasks_create
+    type: request
+    name: Create Task
+    method: POST
+    url: "{{ baseUrl }}/tasks"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "title": "Estudar MongoDB",
+          "description": "Revisar índices e agregações",
+          "status": "todo",
+          "priority": "high",
+          "dueDate": "2030-01-01T00:00:00.000Z"
+        }
+
+  - _id: req_tasks_list
+    type: request
+    name: List Tasks
+    method: GET
+    url: "{{ baseUrl }}/tasks?status=todo&priority=high&title=estudar"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+
+  - _id: req_tasks_get_by_id
+    type: request
+    name: Get Task by ID
+    method: GET
+    url: "{{ baseUrl }}/tasks/{{ taskId }}"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+
+  - _id: req_tasks_put
+    type: request
+    name: Update Task (PUT)
+    method: PUT
+    url: "{{ baseUrl }}/tasks/{{ taskId }}"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "title": "Estudar MongoDB a fundo",
+          "description": "Aulas 1-5",
+          "status": "in-progress",
+          "priority": "medium",
+          "dueDate": null
+        }
+
+  - _id: req_tasks_patch
+    type: request
+    name: Update Task (PATCH)
+    method: PATCH
+    url: "{{ baseUrl }}/tasks/{{ taskId }}"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "status": "done"
+        }
+
+  - _id: req_tasks_delete
+    type: request
+    name: Delete Task
+    method: DELETE
+    url: "{{ baseUrl }}/tasks/{{ taskId }}"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+
+  # Casos de erro
+  - _id: req_error_no_token
+    type: request
+    name: Error - No Token
+    method: GET
+    url: "{{ baseUrl }}/tasks"
+
+  - _id: req_error_invalid_token
+    type: request
+    name: Error - Invalid Token
+    method: GET
+    url: "{{ baseUrl }}/tasks"
+    headers:
+      - name: Authorization
+        value: "Bearer invalid.token.here"
+
+  - _id: req_error_forbidden_other_user
+    type: request
+    name: Error - Forbidden Other User
+    method: GET
+    url: "{{ baseUrl }}/tasks/{{ otherUserTaskId }}"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+
+  - _id: req_error_bad_request
+    type: request
+    name: Error - Bad Request (Create)
+    method: POST
+    url: "{{ baseUrl }}/tasks"
+    headers:
+      - name: Authorization
+        value: "Bearer {{ token }}"
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "title": "ab"
+        }
