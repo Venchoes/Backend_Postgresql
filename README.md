@@ -1,10 +1,10 @@
-# Backend_MongoDB
+# Backend_PostgreSQL
 
 #video do youtube (parte 1): https://www.youtube.com/watch?v=8roSmcjYvPM
 
 #video do youtube (parte 2): https://www.youtube.com/watch?v=j15WMb6vSec
 
-Backend completo em Node.js (TypeScript) + Express + MongoDB com autenticação JWT, seguindo arquitetura de camadas. Nesta versão, foi adicionada a funcionalidade completa de CRUD de Task-List protegida por JWT.
+Backend completo em Node.js (TypeScript) + Express + PostgreSQL com autenticação JWT, seguindo arquitetura de camadas. Nesta versão, foi adicionada a funcionalidade completa de CRUD de Task-List protegida por JWT.
 
 ## 📋 Funcionalidades
 
@@ -30,10 +30,10 @@ Backend completo em Node.js (TypeScript) + Express + MongoDB com autenticação 
 api/
 ├── controllers/    # Lógica de requisição/resposta
 ├── services/       # Regras de negócio
-├── models/         # Schemas do MongoDB (Mongoose)
+├── models/         # Entidades do PostgreSQL (TypeORM)
 ├── routes/         # Definição de rotas
 ├── middlewares/    # Auth, validação, error handling
-├── database/       # Conexão com MongoDB
+├── database/       # Conexão com PostgreSQL (TypeORM)
 ├── utils/          # Logs, JWT, exceções
 ├── types/          # Interfaces TypeScript
 └── config/         # Configurações de ambiente
@@ -43,7 +43,7 @@ api/
 
 ### Pré-requisitos
 - Node.js v14+
-- MongoDB local ou MongoDB Atlas
+- PostgreSQL 16+
 
 ### Instalação
 
@@ -64,25 +64,22 @@ cp .env.example .env
 
 ```env
 PORT=3000
-# Conexão Single (use uma delas)
-# Compatibilidade (legado):
-MONGODB_URI=mongodb://localhost:27017/backend_mongodb
-# Novas variáveis (preferencial):
-MONGODB_URI_LOCAL=mongodb://localhost:27017/backend_mongodb
-MONGODB_URI_ATLAS=
-# Dual Sync (opcional): conecta simultaneamente nos dois
-MONGODB_DUAL_SYNC=false
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=appdb
 JWT_SECRET=sua_chave_secreta_super_segura
 NODE_ENV=development
 ```
 
-### Subir MongoDB local (opcional via Docker Compose)
+### Subir PostgreSQL local (via Docker Compose)
 
 ```bash
 docker compose up -d
 ```
 
-O Mongo ficará disponível em `mongodb://localhost:27017`.
+O PostgreSQL ficará disponível em `postgres://postgres:postgres@localhost:5432/appdb`.
 
 ### Executar
 

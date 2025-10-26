@@ -6,7 +6,7 @@ const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const user = await (0, auth_service_1.registerUser)(name, email, password);
-        return res.status(201).json({ message: 'Usuário criado com sucesso', user: { id: user._id, name: user.name, email: user.email } });
+        return res.status(201).json({ message: 'Usuário criado com sucesso', user: { id: user.id, name: user.name, email: user.email } });
     }
     catch (error) {
         const status = error.status || 500;

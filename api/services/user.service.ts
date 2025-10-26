@@ -1,35 +1,33 @@
 import { User } from '../models/user.model';
-import { hash, compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { ConflictException, BadRequestException } from '../utils/exceptions.util';
+import { getDataSource } from '../database/connection.database';
 
 export class UserService {
     async createUser(name: string, email: string, password: string) {
-    const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            throw new ConflictException('Email já está em uso.');
-        }
-
-        const newUser = new User({ name, email, password: password });
-        await newUser.save();
+        const ds = getDataSource();
+        const repo = ds.getRepository(User);
+        const existingUser = await repo.findOne({ where: { email }, select: ['id'] });
+        if (existingUser) throw new ConflictException('Email já está em uso.');
+        const newUser = repo.create({ name, email, password });
+        await repo.save(newUser);
         return newUser;
     }
 
     async verifyEmail(email: string) {
-    const user = await User.findOne({ email });
-        return user !== null;
+        const ds = getDataSource();
+        const repo = ds.getRepository(User);
+        const user = await repo.findOne({ where: { email }, select: ['id'] });
+        return !!user;
     }
 
     async validateUser(email: string, password: string) {
-    const user = await User.findOne({ email });
-        if (!user) {
-            throw new BadRequestException('Usuário não encontrado.');
-        }
-
+        const ds = getDataSource();
+        const repo = ds.getRepository(User);
+        const user = await repo.findOne({ where: { email } });
+        if (!user) throw new BadRequestException('Usuário não encontrado.');
         const isPasswordValid = await compare(password, user.password);
-        if (!isPasswordValid) {
-            throw new BadRequestException('Senha inválida.');
-        }
-
+        if (!isPasswordValid) throw new BadRequestException('Senha inválida.');
         return user;
     }
 }

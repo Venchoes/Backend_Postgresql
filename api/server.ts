@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import connectToDatabase from './database/connection.database';
 import authRoutes from './routes/auth.routes';
@@ -19,12 +20,9 @@ connectToDatabase();
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  
   res.status(200).json({ 
-
-    message: '🚀 Projeto Backend com Express e MongoDB funcionando corretamente :)!',
+    message: '🚀 Projeto Backend com Express e PostgreSQL funcionando corretamente :)!',
     status: 'WORKING',
-  
   });
 
 });

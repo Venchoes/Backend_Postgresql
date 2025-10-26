@@ -1,52 +1,59 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserLocal = exports.User = void 0;
-const mongoose_1 = require("mongoose");
+exports.User = void 0;
+const typeorm_1 = require("typeorm");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const connection_database_1 = require("../database/connection.database");
-const userSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 3,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        // match: /.+\@.+\..+/,
-    },
-    password: {
-        type: String,
-        required: true,
-        select: false,
-    },
-});
-// Hash the password before saving the user
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password'))
-        return next();
-    const salt = await bcrypt_1.default.genSalt(10);
-    this.password = await bcrypt_1.default.hash(this.password, salt);
-    next();
-});
-// Method to compare password
-userSchema.methods.comparePassword = async function (password) {
-    return await bcrypt_1.default.compare(password, this.password);
-};
-exports.User = (0, mongoose_1.model)('User', userSchema);
-// Função para obter o modelo local (lazy loading)
-let userLocalModel = null;
-const getUserLocal = () => {
-    if (!userLocalModel) {
-        const secondaryConn = (0, connection_database_1.getSecondaryConnection)();
-        if (secondaryConn) {
-            userLocalModel = secondaryConn.model('User', userSchema);
+const task_model_1 = require("./task.model");
+let User = class User {
+    async hashPassword() {
+        // Evita re-hash se já estiver no formato bcrypt
+        if (this.password && !this.password.startsWith('$2')) {
+            const salt = await bcrypt_1.default.genSalt(10);
+            this.password = await bcrypt_1.default.hash(this.password, salt);
         }
     }
-    return userLocalModel;
 };
-exports.getUserLocal = getUserLocal;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], User.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 120 }),
+    __metadata("design:type", String)
+], User.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Index)({ unique: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 150, unique: true }),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
+    __metadata("design:type", String)
+], User.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => task_model_1.Task, (task) => task.user),
+    __metadata("design:type", Array)
+], User.prototype, "tasks", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    (0, typeorm_1.BeforeUpdate)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], User.prototype, "hashPassword", null);
+User = __decorate([
+    (0, typeorm_1.Entity)('users')
+], User);
+exports.User = User;

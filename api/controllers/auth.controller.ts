@@ -4,8 +4,8 @@ import { registerUser, loginUser } from '../services/auth.service';
 export const register = async (req: Request, res: Response) => {
     try {
         const { name, email, password } = req.body;
-        const user = await registerUser(name, email, password);
-        return res.status(201).json({ message: 'Usuário criado com sucesso', user: { id: user._id, name: user.name, email: user.email } });
+    const user = await registerUser(name, email, password);
+    return res.status(201).json({ message: 'Usuário criado com sucesso', user: { id: user.id, name: user.name, email: user.email } });
     } catch (error: any) {
         const status = error.status || 500;
         if (status >= 500) {

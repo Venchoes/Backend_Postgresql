@@ -1,7 +1,7 @@
 {
-  "name": "backend_mongodb",
+  "name": "backend_postgresql",
   "version": "1.0.0",
-  "description": "A backend project using MongoDB with user authentication via JWT.",
+  "description": "Backend Node.js (TypeScript) usando PostgreSQL com autenticação JWT.",
   "main": "api/server.js",
   "scripts": {
     "start": "npm run build && node api/server.js",
@@ -15,8 +15,9 @@
     "express": "^4.17.1",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^6.20.0",
-    "mongoose": "^5.10.9",
+  "pg": "^8.11.3",
+  "reflect-metadata": "^0.1.14",
+  "typeorm": "^0.3.20",
     "winston": "^3.18.3"
   },
   "devDependencies": {

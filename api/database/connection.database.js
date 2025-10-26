@@ -3,86 +3,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSecondaryConnection = exports.secondaryConnection = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
+exports.getDataSource = void 0;
+require("reflect-metadata");
 const dotenv_1 = __importDefault(require("dotenv"));
+const typeorm_1 = require("typeorm");
+const user_model_1 = require("../models/user.model");
+const task_model_1 = require("../models/task.model");
 dotenv_1.default.config();
-// Conexão secundária para dual sync
-let secondaryConnection = null;
-exports.secondaryConnection = secondaryConnection;
-const getSecondaryConnection = () => secondaryConnection;
-exports.getSecondaryConnection = getSecondaryConnection;
+let AppDataSource;
+const getDataSource = () => {
+    if (!AppDataSource) {
+        AppDataSource = new typeorm_1.DataSource({
+            type: 'postgres',
+            host: process.env.POSTGRES_HOST || 'localhost',
+            port: Number(process.env.POSTGRES_PORT || 5432),
+            username: process.env.POSTGRES_USER || 'postgres',
+            password: process.env.POSTGRES_PASSWORD || 'postgres',
+            database: process.env.POSTGRES_DB || 'appdb',
+            synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true' || true,
+            logging: false,
+            entities: [user_model_1.User, task_model_1.Task],
+        });
+    }
+    return AppDataSource;
+};
+exports.getDataSource = getDataSource;
 const connectToDatabase = async () => {
     try {
-        const dualSync = process.env.MONGODB_DUAL_SYNC === 'true';
-        const uriLocal = process.env.MONGODB_URI_LOCAL;
-        const uriAtlas = process.env.MONGODB_URI_ATLAS;
-        const uriSingleLegacy = process.env.MONGODB_URI; // compatibilidade com projetos anteriores
-        if (dualSync) {
-            console.log('[DATABASE] Modo DUAL SYNC ativado - conectando aos dois bancos...');
-            let primaryOk = false;
-            let secondaryOk = false;
-            // Conecta ao Atlas na conexão principal (tenta, mas não derruba se falhar)
-            if (uriAtlas || uriSingleLegacy) {
-                try {
-                    console.log('[DATABASE] Conectando ao MongoDB Atlas...');
-                    await mongoose_1.default.connect(uriAtlas || uriSingleLegacy);
-                    console.log('[DATABASE] ✅ Conectado ao MongoDB Atlas');
-                    primaryOk = true;
-                }
-                catch (err) {
-                    console.error('[DATABASE] ⚠️ Falha ao conectar no Atlas:', err instanceof Error ? err.message : String(err));
-                }
-            }
-            // Conecta ao Local na conexão secundária (tenta, mas não derruba se falhar)
-            if (uriLocal || uriSingleLegacy) {
-                try {
-                    console.log('[DATABASE] Conectando ao MongoDB Local...');
-                    exports.secondaryConnection = secondaryConnection = mongoose_1.default.createConnection(uriLocal || uriSingleLegacy || 'mongodb://localhost:27017/backend_mongodb');
-                    await new Promise((resolve, reject) => {
-                        const timeout = setTimeout(() => reject(new Error('Timeout connecting to Local DB')), 10000);
-                        secondaryConnection.on('connected', () => {
-                            clearTimeout(timeout);
-                            resolve();
-                        });
-                        secondaryConnection.on('error', (err) => {
-                            clearTimeout(timeout);
-                            reject(err);
-                        });
-                    });
-                    console.log('[DATABASE] ✅ Conectado ao MongoDB Local');
-                    secondaryOk = true;
-                    // Se Atlas falhou mas o Local subiu, vincular a conexão padrão ao Local
-                    if (!primaryOk) {
-                        try {
-                            console.log('[DATABASE] Definindo conexão padrão para o MongoDB Local (fallback) ...');
-                            await mongoose_1.default.connect(uriLocal || uriSingleLegacy || 'mongodb://localhost:27017/backend_mongodb');
-                            console.log('[DATABASE] ✅ Conexão padrão agora aponta para Local');
-                        }
-                        catch (err2) {
-                            console.error('[DATABASE] ❌ Falha ao ajustar conexão padrão para Local:', err2 instanceof Error ? err2.message : String(err2));
-                        }
-                    }
-                }
-                catch (err) {
-                    console.error('[DATABASE] ⚠️ Falha ao conectar no MongoDB Local:', err instanceof Error ? err.message : String(err));
-                }
-            }
-            if (!primaryOk && !secondaryOk) {
-                throw new Error('[DATABASE] Nenhuma conexão pôde ser estabelecida (Atlas e Local falharam).');
-            }
-            console.log('[DATABASE] ✅ Dual Sync configurado (Atlas:', primaryOk, ', Local:', secondaryOk, ')');
-        }
-        else {
-            // Modo single (conecta apenas a um)
-            const uri = uriAtlas || uriLocal || uriSingleLegacy || 'mongodb://localhost:27017/backend_mongodb';
-            console.log('[DATABASE] Conectando ao MongoDB...');
-            await mongoose_1.default.connect(uri);
-            console.log('[DATABASE] ✅ Conexão estabelecida');
+        const ds = (0, exports.getDataSource)();
+        if (!ds.isInitialized) {
+            console.log('[DATABASE] Conectando ao PostgreSQL...');
+            await ds.initialize();
+            console.log('[DATABASE] ✅ Conexão estabelecida com PostgreSQL');
         }
     }
     catch (error) {
-        console.error('[DATABASE] ❌ Erro ao conectar ao MongoDB:', error);
+        console.error('[DATABASE] ❌ Erro ao conectar ao PostgreSQL:', error);
         process.exit(1);
     }
 };
