@@ -60,7 +60,7 @@ cp .env.example .env
 # Edite o .env com suas credenciais
 ```
 
-### Configuração do .env
+### Configuração do .env (Local)
 
 ```env
 PORT=3000
@@ -71,6 +71,31 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=appdb
 JWT_SECRET=sua_chave_secreta_super_segura
 NODE_ENV=development
+
+### Conexão em Nuvem
+
+Você pode usar um provedor gerenciado (Render, Railway, Neon, Supabase, ElephantSQL, RDS, etc.). Informe a URL de conexão e (se necessário) SSL:
+
+```
+# Exemplo de variáveis para nuvem
+POSTGRES_URL=postgres://usuario:senha@host:5432/banco
+# ou DATABASE_URL
+DATABASE_URL=postgres://usuario:senha@host:5432/banco
+
+# Se o provedor exigir SSL
+POSTGRES_SSL=true
+# Alguns provedores usam certificados self-signed; se precisar, desabilite verificação estrita
+POSTGRES_SSL_REJECT_UNAUTHORIZED=false
+
+# Em produção, recomendo desligar o synchronize e usar migrations
+NODE_ENV=production
+TYPEORM_SYNCHRONIZE=false
+```
+
+Observações:
+- Quando `POSTGRES_URL`/`DATABASE_URL` estiver definida, ela tem prioridade sobre host/porta/usuário/senha.
+- Por padrão, `synchronize` fica ligado em desenvolvimento e desligado em produção. Você pode controlar com `TYPEORM_SYNCHRONIZE`.
+- Para ambientes serverless (como Vercel), prefira um serviço web dedicado (Render/Railway/Fly) para rodar o Express, e use o Postgres gerenciado via `POSTGRES_URL`.
 ```
 
 ### Subir PostgreSQL local (via Docker Compose)

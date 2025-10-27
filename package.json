@@ -4,10 +4,13 @@
   "description": "Backend Node.js (TypeScript) usando PostgreSQL com autenticação JWT.",
   "main": "api/server.js",
   "scripts": {
-    "start": "npm run build && node api/server.js",
+    "start": "node api/server.js",
     "dev": "ts-node-dev --respawn --transpile-only api/server.ts",
     "build": "tsc -p .",
-    "test": "jest"
+    "vercel-build": "npm install --legacy-peer-deps && npm run build",
+    "test": "jest",
+    "migrate:run": "ts-node -T scripts/runMigrations.ts",
+    "migrate:revert": "ts-node -T scripts/revertMigration.ts"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

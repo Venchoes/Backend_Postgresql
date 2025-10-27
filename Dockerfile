@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copia package.json e package-lock.json e instala dependências
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copia o resto do projeto (src/ e tsconfig.json)
 COPY . .
@@ -21,14 +21,15 @@ WORKDIR /app
 
 # Copia apenas os arquivos necessários da etapa de build
 COPY --from=build /app/package*.json ./
-COPY --from=build /app/dist ./dist
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
+COPY --from=build /app/api ./api
+COPY --from=build /app/tsconfig.json ./tsconfig.json
 
 # Expõe a porta do seu servidor Express
 EXPOSE 3000
 
 # Ambiente de execução
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 
 # Comando para iniciar o servidor
-CMD ["node", "dist/server.js"]
+CMD ["node", "api/server.js"]

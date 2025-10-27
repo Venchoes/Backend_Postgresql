@@ -1,7 +1,8 @@
-# Insomnia Collection - Task-List CRUD
+# Insomnia Collection - Task-List CRUD com PostgreSQL
 # Variáveis sugeridas
 # baseUrl: http://localhost:3000
 # token: <coloque_o_token_de_login>
+# taskId: <ID numérico da task, ex: 1, 2, 3...>
 
 ---
 version: 1
@@ -45,8 +46,8 @@ resources:
       mimeType: application/json
       text: |
         {
-          "title": "Estudar MongoDB",
-          "description": "Revisar índices e agregações",
+          "title": "Estudar PostgreSQL",
+          "description": "Revisar índices, constraints e relações",
           "status": "todo",
           "priority": "high",
           "dueDate": "2030-01-01T00:00:00.000Z"
@@ -82,8 +83,8 @@ resources:
       mimeType: application/json
       text: |
         {
-          "title": "Estudar MongoDB a fundo",
-          "description": "Aulas 1-5",
+          "title": "Estudar PostgreSQL a fundo",
+          "description": "TypeORM + migrations + otimização de queries",
           "status": "in-progress",
           "priority": "medium",
           "dueDate": null

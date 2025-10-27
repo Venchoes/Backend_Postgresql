@@ -1,16 +1,12 @@
 {
     "version": 2,
-    "builds": [
+    "buildCommand": "bash build.sh",
+    "installCommand": "echo 'Pulando install padrão, usando build.sh'",
+    "outputDirectory": ".",
+    "rewrites": [
         {
-            "src": "api/server.js",
-            "use": "@vercel/node",
-            "config": { "includeFiles": ["dist/**"] }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "api/server.js"
+            "source": "/(.*)",
+            "destination": "/api/server.js"
         }
     ]
 }

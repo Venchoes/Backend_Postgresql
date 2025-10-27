@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Backend MongoDB - API Tests",
-    "description": "Coleção de requisições para testar a API Backend MongoDB com todos os cenários de cadastro, login e rotas protegidas",
+    "name": "Backend PostgreSQL - API Tests",
+    "description": "Coleção de requisições para testar a API Backend PostgreSQL + TypeORM com todos os cenários de cadastro, login e rotas protegidas",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "version": "1.0.0"
   },
@@ -331,7 +331,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Estudar MongoDB\",\n  \"description\": \"Revisar índices e agregações\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2030-01-01T00:00:00.000Z\"\n}"
+              "raw": "{\n  \"title\": \"Estudar PostgreSQL\",\n  \"description\": \"Revisar índices, constraints e relações\",\n  \"status\": \"todo\",\n  \"priority\": \"high\",\n  \"dueDate\": \"2030-01-01T00:00:00.000Z\"\n}"
             },
             "url": { "raw": "{{base_url}}/tasks", "host": ["{{base_url}}"], "path": ["tasks"] }
           },
@@ -385,7 +385,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Estudar MongoDB a fundo\",\n  \"description\": \"Aulas 1-5\",\n  \"status\": \"in-progress\",\n  \"priority\": \"medium\",\n  \"dueDate\": null\n}"
+              "raw": "{\n  \"title\": \"Estudar PostgreSQL a fundo\",\n  \"description\": \"TypeORM + migrations + otimização de queries\",\n  \"status\": \"in-progress\",\n  \"priority\": \"medium\",\n  \"dueDate\": null\n}"
             },
             "url": { "raw": "{{base_url}}/tasks/{{taskId}}", "host": ["{{base_url}}"], "path": ["tasks","{{taskId}}"] }
           },
