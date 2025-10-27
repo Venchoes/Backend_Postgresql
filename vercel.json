@@ -2,11 +2,10 @@
     "version": 2,
     "buildCommand": "bash build.sh",
     "installCommand": "echo 'Pulando install padrão, usando build.sh'",
-    "outputDirectory": ".",
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/api/server.js"
-        }
-    ]
+        "rewrites": [
+            {
+                "source": "/(.*)",
+                "destination": "/dist/server.js"
+            }
+        ]
 }

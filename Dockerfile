@@ -22,8 +22,7 @@ WORKDIR /app
 # Copia apenas os arquivos necessários da etapa de build
 COPY --from=build /app/package*.json ./
 RUN npm install --omit=dev --legacy-peer-deps
-COPY --from=build /app/api ./api
-COPY --from=build /app/tsconfig.json ./tsconfig.json
+COPY --from=build /app/dist ./dist
 
 # Expõe a porta do seu servidor Express
 EXPOSE 3000
@@ -32,4 +31,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Comando para iniciar o servidor
-CMD ["node", "api/server.js"]
+CMD ["node", "dist/server.js"]

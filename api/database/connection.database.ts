@@ -20,14 +20,15 @@ export const getDataSource = (): DataSource => {
     const sslEnabled = process.env.POSTGRES_SSL === 'true';
     const rejectUnauthorized = process.env.POSTGRES_SSL_REJECT_UNAUTHORIZED !== 'false';
 
+    const isTsRuntime = __filename.endsWith('.ts');
     const baseOptions: any = {
       type: 'postgres',
       synchronize,
       logging: process.env.TYPEORM_LOGGING === 'true' || false,
       entities: [User, Task],
       migrations: [
-        // Suporta ts em dev e js em build
-        path.join(__dirname, 'migrations/*.{ts,js}')
+        // Usa .ts em dev (ts-node) e .js no build (dist)
+        path.join(__dirname, `migrations/*.${isTsRuntime ? 'ts' : 'js'}`)
       ],
     };
 
