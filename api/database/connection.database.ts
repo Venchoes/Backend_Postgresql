@@ -52,14 +52,17 @@ export const getDataSource = (): DataSource => {
     }
 
     const isTsRuntime = __filename.endsWith('.ts');
+    const migrationsGlob = isTsRuntime
+      ? path.resolve(process.cwd(), 'api/database/migrations/*.ts')
+      : path.resolve(process.cwd(), 'dist/database/migrations/*.js');
     const baseOptions: any = {
       type: 'postgres',
       synchronize,
       logging: process.env.TYPEORM_LOGGING === 'true' || false,
       entities: [User, Task],
       migrations: [
-        // Usa .ts em dev (ts-node) e .js no build (dist)
-        path.join(__dirname, `migrations/*.${isTsRuntime ? 'ts' : 'js'}`)
+        // Usa caminhos absolutos estáveis para evitar conflitos entre src e dist
+        migrationsGlob
       ],
     };
 
