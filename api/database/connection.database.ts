@@ -33,6 +33,15 @@ export const getDataSource = (): DataSource => {
     } catch (_) {
       // Se a URL não puder ser parseada, mantém configuração padrão
     }
+
+    // Se estiver usando host/port e o host não for local, habilita SSL automaticamente em produção
+    if (!url) {
+      const host = (process.env.POSTGRES_HOST || 'localhost').toLowerCase();
+      const isLocal = host === 'localhost' || host === '127.0.0.1';
+      if (!sslEnabled && !isLocal && isProd) {
+        sslEnabled = true;
+      }
+    }
     // Caso esteja usando host/port e o host seja remoto (não localhost), habilita SSL automaticamente
     if (!url && !sslEnabled) {
       const hostEnv = (process.env.POSTGRES_HOST || '').toLowerCase();
@@ -104,7 +113,12 @@ const connectToDatabase = async () => {
     }
   } catch (error) {
     console.error('[DATABASE] ❌ Erro ao conectar ao PostgreSQL:', error);
-    process.exit(1);
+    // Em desenvolvimento, não derruba o servidor para permitir testes de rotas básicas/saúde
+    if ((process.env.NODE_ENV || 'development') === 'production') {
+      process.exit(1);
+    } else {
+      console.warn('[DATABASE] Continuando sem banco de dados (modo desenvolvimento). Algumas rotas podem falhar).');
+    }
   }
 };
 
