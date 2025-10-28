@@ -27,8 +27,8 @@ const getDataSource = () => {
             logging: process.env.TYPEORM_LOGGING === 'true' || false,
             entities: [user_model_1.User, task_model_1.Task],
             migrations: [
-                // Suporta ts em dev e js em build
-                path_1.default.join(__dirname, 'migrations/*.{ts,js}')
+                // Carrega apenas migrations .js no runtime compilado (evita conflito com .ts quando ambos existem)
+                path_1.default.join(__dirname, 'migrations/*.js')
             ],
         };
         if (url) {
