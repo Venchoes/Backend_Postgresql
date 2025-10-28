@@ -2,7 +2,7 @@
   "name": "backend_postgresql",
   "version": "1.0.0",
   "description": "Backend Node.js (TypeScript) usando PostgreSQL com autenticação JWT.",
-  "main": "api/server.js",
+  "main": "dist/server.js",
   "scripts": {
   "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only api/server.ts",

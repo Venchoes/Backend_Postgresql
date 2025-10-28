@@ -34,3 +34,7 @@ coverage/
 dist/
 build/
 
+# Evitar commit de artefatos JS gerados dentro de src
+/api/**/*.js
+/api/**/*.js.map
+
