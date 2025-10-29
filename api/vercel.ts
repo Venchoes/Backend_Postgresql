@@ -1,4 +1,7 @@
 import app from './app';
 
-// Vercel @vercel/node aceita exportar um handler (Express app é um request handler compatível)
-export default app;
+// Exporta um handler explícito para evitar qualquer ambiguidade de default export
+// em alguns ambientes/builders da Vercel
+export default function handler(req: any, res: any) {
+	return (app as any)(req, res);
+}
