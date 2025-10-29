@@ -74,6 +74,8 @@ export const getDataSource = (): DataSource => {
         extra: {
           ssl: sslEnabled ? { rejectUnauthorized } : undefined,
           max: Number(process.env.POSTGRES_POOL_SIZE || 10),
+          // Evita travar a função serverless com timeouts longos
+          connectionTimeoutMillis: Number(process.env.POSTGRES_CONNECT_TIMEOUT_MS || 5000),
         },
       });
     } else {
@@ -88,6 +90,7 @@ export const getDataSource = (): DataSource => {
         extra: {
           ssl: sslEnabled ? { rejectUnauthorized } : undefined,
           max: Number(process.env.POSTGRES_POOL_SIZE || 10),
+          connectionTimeoutMillis: Number(process.env.POSTGRES_CONNECT_TIMEOUT_MS || 5000),
         },
       });
     }
@@ -116,12 +119,13 @@ const connectToDatabase = async () => {
     }
   } catch (error) {
     console.error('[DATABASE] ❌ Erro ao conectar ao PostgreSQL:', error);
-    // Em desenvolvimento, não derruba o servidor para permitir testes de rotas básicas/saúde
-    if ((process.env.NODE_ENV || 'development') === 'production') {
+    const isProd = (process.env.NODE_ENV || 'development') === 'production';
+    const isServerless = !!process.env.VERCEL || !!process.env.AWS_REGION || !!process.env.NOW_REGION;
+    // Em ambiente serverless (Vercel), nunca derruba o processo; apenas loga o erro
+    if (isProd && !isServerless) {
       process.exit(1);
-    } else {
-      console.warn('[DATABASE] Continuando sem banco de dados (modo desenvolvimento). Algumas rotas podem falhar).');
     }
+    console.warn('[DATABASE] Continuando sem banco de dados. Algumas rotas podem falhar. (serverless ou desenvolvimento)');
   }
 };
 
