@@ -4,12 +4,6 @@
         { "src": "api/vercel.ts", "use": "@vercel/node" },
         { "src": "api/health.ts", "use": "@vercel/node" }
     ],
-    "functions": {
-        "api/**/*.ts": {
-            "memory": 512,
-            "maxDuration": 10
-        }
-    },
     "routes": [
         { "src": "^/health$", "dest": "api/health.ts" },
         { "src": "/(.*)", "dest": "api/vercel.ts" }
