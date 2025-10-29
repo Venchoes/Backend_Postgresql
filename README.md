@@ -4,7 +4,11 @@
 
 #video do youtube (parte 2): https://www.youtube.com/watch?v=j15WMb6vSec
 
+#video do youtube (postgresql): https://www.youtube.com/watch?v=5944IKwkewA
+
 Backend completo em Node.js (TypeScript) + Express + PostgreSQL com autenticação JWT, seguindo arquitetura de camadas. Nesta versão, foi adicionada a funcionalidade completa de CRUD de Task-List protegida por JWT.
+
+Obs: As instruções para a alternância entre porta local/nuvem estão no arquivo .env.example (.env.example nao precisa ser ocultado, pois nao armazena nenhum informação privada)
 
 ## 📋 Funcionalidades
 
@@ -58,6 +62,8 @@ npm install
 # Configure as variáveis de ambiente
 cp .env.example .env
 # Edite o .env com suas credenciais
+
+**Importante:** NUNCA comite o arquivo `.env` com segredos reais no repositório. O arquivo `.env.example` contém chaves e valores de exemplo (placeholders). No desenvolvimento, faça uma cópia local com `cp .env.example .env` e preencha suas credenciais. Em produção, prefira usar um gerenciador de segredos da plataforma (por exemplo: Vercel/Render/Railway/Heroku/HashiCorp Vault/AWS Secrets Manager) em vez de armazenar segredos em arquivos no repositório.
 ```
 
 ### Configuração do .env (Local)
