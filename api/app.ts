@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
 import tasksRoutes from './routes/tasks.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
+import { securityHeaders } from './middlewares/security.middleware';
 import { Request, Response } from 'express';
 
 const app = express();
@@ -14,6 +15,9 @@ const app = express();
 // inicializado antes de aceitar requisições que acessam entidades.
 
 // Middlewares
+// Headers de segurança (CSP, etc.)
+app.use(securityHeaders);
+
 // Habilita JSON body parsing
 app.use(express.json());
 
