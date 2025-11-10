@@ -3,9 +3,11 @@ import { Request, Response, NextFunction } from 'express';
 import { UserPayload } from '../types/index';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Use a secure secret in production
+const JWT_EXPIRES_IN = Number(process.env.JWT_EXPIRES_IN || 3600);
 
 export const generateToken = (userId: string): string => {
-    const token = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '1h' });
+    // Expira em segundos (configurável via JWT_EXPIRES_IN)
+    const token = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
     return token;
 };
 

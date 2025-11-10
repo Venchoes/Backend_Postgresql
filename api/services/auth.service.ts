@@ -10,6 +10,7 @@ import { User } from '../models/user.model';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_EXPIRES_IN = Number(process.env.JWT_EXPIRES_IN || 3600);
 
 export const registerUser = async (name: string, email: string, password: string) => {
     // Validações básicas para 422
@@ -48,7 +49,8 @@ export const loginUser = async (email: string, password: string): Promise<string
         throw new UnauthorizedException('Senha incorreta');
     }
 
-    const token = sign({ id: String(user.id), email: user.email } as UserPayload, JWT_SECRET, { expiresIn: '1h' });
+    // Expira em segundos (configurável via JWT_EXPIRES_IN)
+    const token = sign({ id: String(user.id), email: user.email } as UserPayload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
     logger.info(`User logged in: ${email}`);
     return token;
 };
