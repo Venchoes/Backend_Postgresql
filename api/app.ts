@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
-import connectToDatabase from './database/connection.database';
 import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';
 import tasksRoutes from './routes/tasks.routes';
@@ -10,8 +9,9 @@ import { Request, Response } from 'express';
 
 const app = express();
 
-// Inicializa conexão (não bloqueia produção em caso de falha quando NODE_ENV !== 'production')
-connectToDatabase();
+// A inicialização da conexão com o DB é feita no startup do servidor
+// (em `server.ts`) — assim garantimos que o DataSource esteja
+// inicializado antes de aceitar requisições que acessam entidades.
 
 // Middlewares
 // Habilita JSON body parsing
