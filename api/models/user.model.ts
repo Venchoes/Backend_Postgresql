@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert, BeforeUpdate, Index } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { Task } from './task.model';

@@ -11,8 +11,12 @@ let AppDataSource: DataSource;
 
 export const getDataSource = (): DataSource => {
   if (!AppDataSource) {
-  const isProd = process.env.NODE_ENV === 'production';
-  const url = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+    const isProd = process.env.NODE_ENV === 'production';
+    const isVercel = !!process.env.VERCEL;
+    const url = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+    
+    // Em produção/Vercel, sempre usa synchronize das variáveis de ambiente
+    // ou desliga por padrão (mais seguro)
     const synchronize = process.env.TYPEORM_SYNCHRONIZE
       ? process.env.TYPEORM_SYNCHRONIZE === 'true'
       : !isProd; // por padrão, sincroniza em dev e desliga em prod
@@ -121,11 +125,20 @@ const connectToDatabase = async () => {
     console.error('[DATABASE] ❌ Erro ao conectar ao PostgreSQL:', error);
     const isProd = (process.env.NODE_ENV || 'development') === 'production';
     const isServerless = !!process.env.VERCEL || !!process.env.AWS_REGION || !!process.env.NOW_REGION;
-    // Em ambiente serverless (Vercel), nunca derruba o processo; apenas loga o erro
+    
+    // Em ambiente serverless de produção (Vercel), DEVE conectar ao banco
+    // Se não conectar, algo está errado com as credenciais
+    if (isProd && isServerless) {
+      throw new Error('Falha crítica ao conectar ao banco de dados em produção. Verifique as variáveis de ambiente POSTGRES_URL ou DATABASE_URL.');
+    }
+    
+    // Em ambiente não-serverless de produção, derruba o processo
     if (isProd && !isServerless) {
       process.exit(1);
     }
-    console.warn('[DATABASE] Continuando sem banco de dados. Algumas rotas podem falhar. (serverless ou desenvolvimento)');
+    
+    // Em desenvolvimento, apenas avisa
+    console.warn('[DATABASE] Continuando sem banco de dados. Algumas rotas podem falhar. (desenvolvimento)');
   }
 };
 
