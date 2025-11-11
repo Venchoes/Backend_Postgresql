@@ -4,9 +4,9 @@
         { "src": "api/vercel.ts", "use": "@vercel/node" },
         { "src": "api/health.ts", "use": "@vercel/node" }
     ],
-    "routes": [
-        { "src": "^/health$", "dest": "api/health.ts" },
-        { "src": "/(.*)", "dest": "api/vercel.ts" }
+    "rewrites": [
+        { "source": "/health", "destination": "/api/health.ts" },
+        { "source": "/(.*)", "destination": "/api/vercel.ts" }
     ],
     "headers": [
         {
